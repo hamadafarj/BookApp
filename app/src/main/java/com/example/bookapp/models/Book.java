@@ -1,18 +1,51 @@
 package com.example.bookapp.models;
 
-public class Book {
+import java.io.Serializable;
+
+public class Book implements Serializable {
     private int id;
     private String bookName;
     private int relaesYesrs;
     private String authoName;
     private int pageNumber;
     private byte[] image;
+    private String CategoryName;
+    private boolean favourite;
 
-    public Book(String bookName, int relaesYesrs, String authoName, int pageNumber) {
+    public Book(String bookName, int relaesYesrs, String authoName, int pageNumber, String categoryName, boolean favourite) {
         this.bookName = bookName;
         this.relaesYesrs = relaesYesrs;
         this.authoName = authoName;
         this.pageNumber = pageNumber;
+        CategoryName = categoryName;
+        this.favourite = favourite;
+    }
+
+    public Book(String bookName, int relaesYesrs, String authoName, int pageNumber, String categoryName) {
+        this.bookName = bookName;
+        this.relaesYesrs = relaesYesrs;
+        this.authoName = authoName;
+        this.pageNumber = pageNumber;
+        CategoryName = categoryName;
+    }
+
+    public Book() {
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
+
+    public String getCategoryName() {
+        return CategoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        CategoryName = categoryName;
     }
 
     public byte[] getImage() {

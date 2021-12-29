@@ -19,7 +19,7 @@ public class ShowAllCategory extends AppCompatActivity {
         setContentView(R.layout.activity_show_all_category);
         MyDataBase myDataBase=new MyDataBase(ShowAllCategory.this);
         RecyclerView rv =findViewById(R.id.RV_all_Category);
-        AllCategoryAdapter myadapter=new AllCategoryAdapter(myDataBase.getAllCategroy(),getApplicationContext());
+        AllCategoryAdapter myadapter=new AllCategoryAdapter(myDataBase.getAllCategroy());
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(myadapter);
     }

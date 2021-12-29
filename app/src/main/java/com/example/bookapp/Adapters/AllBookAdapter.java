@@ -1,6 +1,7 @@
 package com.example.bookapp.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookapp.R;
+import com.example.bookapp.activites.ShowAllBooksActicity;
+import com.example.bookapp.activites.ShowBookDetails;
 import com.example.bookapp.models.Book;
 import com.example.bookapp.models.Category;
 
@@ -20,13 +23,14 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.ViewHold
     ArrayList<Book> data=new ArrayList<>();
     Context context;
 
-    public AllBookAdapter(ArrayList<Book> data, Context context) {
+    public AllBookAdapter(ArrayList<Book> data) {
         this.data = data;
         this.context = context;
     }
     @NonNull
     @Override
     public AllBookAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context=parent.getContext();
         View root = LayoutInflater.from(context).inflate(R.layout.book_item,null,false);
         return new ViewHolder(root);
     }
@@ -35,23 +39,25 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Book b=data.get(position);
         holder.tv_BookName.setText(b.getBookName());
-        holder.tv_AuthorName.setText(b.getAuthoName());
-        holder.tv_RelaesYeaer.setText(b.getRelaesYesrs()+"");
-//        holder.tv_PageNumber.setText(b.getPageNumber()+"");
-        Log.d("hamada","rrrrr"+b);
+        holder.tv_BookName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(context, ShowBookDetails.class);
+                intent.putExtra("book",b);
+                context.startActivity(intent);
+            }
+        });
     }
     @Override
     public int getItemCount() {
         return data.size();
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
-       TextView tv_BookName,tv_AuthorName,tv_RelaesYeaer,tv_PageNumber;
+       TextView tv_BookName;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_BookName=itemView.findViewById(R.id.tv_BookName);
-            tv_AuthorName=itemView.findViewById(R.id.tv_AuthorName);
-            tv_RelaesYeaer=itemView.findViewById(R.id.tv_RelaesYeaer);
-           // tv_PageNumber=itemView.findViewById(R.id.tv_PageNumber);
+
         }
     }
 }

@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         createBook=findViewById(R.id.btn_CreateBook);
         createCategory=findViewById(R.id.btn_CreateCategory);
         libaray=findViewById(R.id.btn_libary);
+        favirite=findViewById(R.id.btn_favorite);
         createBook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -38,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                // Intent intent=new Intent(getApplicationContext(), ShowAllBooksActicity.class);
                 Intent intent=new Intent(getApplicationContext(), ShowAllCategory.class);
+                startActivity(intent);
+            }
+        });
+        favirite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getApplicationContext(), ShowFavouriteBooks.class);
                 startActivity(intent);
             }
         });

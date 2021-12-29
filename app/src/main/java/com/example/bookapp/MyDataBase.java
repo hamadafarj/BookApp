@@ -1,6 +1,7 @@
 package com.example.bookapp;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -8,13 +9,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.bookapp.activites.MainActivity;
 import com.example.bookapp.models.Book;
 import com.example.bookapp.models.Category;
 
 import java.util.ArrayList;
 public class MyDataBase extends SQLiteOpenHelper {
     private static String db_name="Book.db";
-    private static int db_verison=2;
+    private static int db_verison=4;
     private static String book_tabel="BOOKS";
     private static String category_tabel="CATEGORY";
     Context context;
@@ -25,12 +27,11 @@ public class MyDataBase extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String bookQuery="CREATE TABLE "+book_tabel+" (id INTEGER PRIMARY KEY AUTOINCREMENT ,CATEGORYNAME STRING,BOOKNAME STRING,AUTHORNAME STRING,RELEASEYEAR INTERGER,PAGENUMBER INTGER,BOOKIMAGE BLOB)";
+        String bookQuery="CREATE TABLE "+book_tabel+" (id INTEGER PRIMARY KEY AUTOINCREMENT ,CATEGORYNAME STRING,BOOKNAME STRING,AUTHORNAME STRING,RELEASEYEAR INTERGER,PAGENUMBER INTGER,BOOKIMAGE BLOB,FAVOURITE BOOLEAN )";
         String categoryQuery="CREATE TABLE "+category_tabel+" (CATEGORYID INTEGER PRIMARY KEY AUTOINCREMENT ,CATEGORYNAME STRING)";
         sqLiteDatabase.execSQL(bookQuery);
         sqLiteDatabase.execSQL(categoryQuery);
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         String bookQuery="DROP TABLE IF EXISTS "+book_tabel;
@@ -64,15 +65,31 @@ public class MyDataBase extends SQLiteOpenHelper {
         }
         return categories;
     }
+
+    public ArrayList<String> getAllCategroyName() {
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<String> categories = new ArrayList<>();
+        String query = "SELECT * FROM "+category_tabel;
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            String categroyName=cursor.getString(1);
+            Category c = new Category(categroyName);
+            categories.add(c.getCategoryName());
+            cursor.moveToNext();
+        }
+        return categories;
+    }
     public void cretaeBook(Book book){
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv=new ContentValues();
-       // cv.put("id",book.getId());
         cv.put("BOOKNAME",book.getBookName());
         cv.put("AUTHORNAME",book.getAuthoName());
         cv.put("RELEASEYEAR",book.getRelaesYesrs());
         cv.put("PAGENUMBER",book.getPageNumber());
         cv.put("BOOKIMAGE",book.getImage());
+        cv.put("CATEGORYNAME",book.getCategoryName());
+        cv.put("FAVOURITE",book.isFavourite());
        long result= db.insert(book_tabel,null,cv);
        if(result!=-1){
            Toast.makeText(context, "Book added successfully", Toast.LENGTH_SHORT).show();
@@ -81,30 +98,64 @@ public class MyDataBase extends SQLiteOpenHelper {
        }
     }
     public void updateBook(Book book) {
-        boolean result=true;
-        SQLiteDatabase db =getWritableDatabase();
-        ContentValues cv = new ContentValues();
+        SQLiteDatabase db=getWritableDatabase();
+        ContentValues cv=new ContentValues();
         cv.put("BOOKNAME",book.getBookName());
         cv.put("AUTHORNAME",book.getAuthoName());
         cv.put("RELEASEYEAR",book.getRelaesYesrs());
         cv.put("PAGENUMBER",book.getPageNumber());
         cv.put("BOOKIMAGE",book.getImage());
+        cv.put("CATEGORYNAME",book.getCategoryName());
+        cv.put("FAVOURITE",book.isFavourite());
         String args[] ={book.getId()+""};
-        db.update(book_tabel,cv,"id=?",args);
+        long result= db.update(book_tabel,cv,"id=?",args);
+        if(result!=-1){
+            Toast.makeText(context, "Book update successfully", Toast.LENGTH_SHORT).show();
+            Intent intent=new Intent(context, MainActivity.class);
+            context.startActivity(intent);
+        }else{
+            Toast.makeText(context, "Failed to update book", Toast.LENGTH_SHORT).show();
+        }
     }
-    public ArrayList<Book> getAllBooks() {
+    public ArrayList<Book> getAllBooks(String cat_Name) {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM "+book_tabel;
+        String query = "SELECT * FROM "+book_tabel+" WHERE CATEGORYNAME = '"+cat_Name+"'";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
              int id=cursor.getInt(0);
-             String bookName=cursor.getString(1);
-             int relaesYesrs=cursor.getInt(2);
+             String cat=cursor.getString(1);
+             String bookName=cursor.getString(2);
              String authoName=cursor.getString(3);
-             int pageNumber=cursor.getInt(4);
-            Book b = new Book(bookName,relaesYesrs,authoName,pageNumber);
+             int relaesYesrs=cursor.getInt(4);
+             int pageNumber=cursor.getInt(5);
+             byte[] imageContent=cursor.getBlob(6);
+             boolean fav=Boolean.parseBoolean(cursor.getString(7));
+            Book b = new Book(bookName,relaesYesrs,authoName,pageNumber,cat,fav);
+            b.setImage(imageContent);
+            books.add(b);
+            cursor.moveToNext();
+        }
+        return books;
+    }
+    public ArrayList<Book> getfavouriteBooks(int favValue) {
+        SQLiteDatabase db = getReadableDatabase();
+        ArrayList<Book> books = new ArrayList<>();
+        String query = "SELECT * FROM "+book_tabel+" WHERE CATEGORYNAME = '"+favValue+"'";
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            int id=cursor.getInt(0);
+            String cat=cursor.getString(1);
+            String bookName=cursor.getString(2);
+            String authoName=cursor.getString(3);
+            int relaesYesrs=cursor.getInt(4);
+            int pageNumber=cursor.getInt(5);
+            byte[] imageContent=cursor.getBlob(6);
+            boolean fav=Boolean.parseBoolean(cursor.getString(7));
+            Book b = new Book(bookName,relaesYesrs,authoName,pageNumber,cat,fav);
+            b.setImage(imageContent);
             books.add(b);
             cursor.moveToNext();
         }

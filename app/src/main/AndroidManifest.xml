@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookApp">
         <activity
+            android:name=".activites.ShowFavouriteBooks"
+            android:exported="false" />
+        <activity
+            android:name=".activites.EditBookDetails"
+            android:exported="false" />
+        <activity
+            android:name=".activites.ShowBookDetails"
+            android:exported="false" />
+        <activity
             android:name=".activites.ShowAllCategory"
             android:exported="false" />
         <activity
