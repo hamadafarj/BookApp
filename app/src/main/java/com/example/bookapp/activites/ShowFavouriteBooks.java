@@ -26,9 +26,9 @@ public class ShowFavouriteBooks extends AppCompatActivity {
         RecyclerView rv =findViewById(R.id.RV_all_favBooks);
         Book book=new Book();
         if(book.isFavourite()){
-            favValue=1;
-        }else{
             favValue=0;
+        }else{
+            favValue=1;
         }
         ArrayList<Book> books=myDataBase.getfavouriteBooks(favValue);
         AllBookAdapter myadapter=new AllBookAdapter(books);

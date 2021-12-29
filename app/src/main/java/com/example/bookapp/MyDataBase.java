@@ -142,7 +142,7 @@ public class MyDataBase extends SQLiteOpenHelper {
     public ArrayList<Book> getfavouriteBooks(int favValue) {
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<Book> books = new ArrayList<>();
-        String query = "SELECT * FROM "+book_tabel+" WHERE CATEGORYNAME = '"+favValue+"'";
+        String query = "SELECT * FROM "+book_tabel+" WHERE FAVOURITE = '"+favValue+"'";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
