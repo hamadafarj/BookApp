@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.view.Window;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.example.bookapp.activites.MainActivity;
+import com.example.bookapp.activites.ShowAllBooksActicity;
 import com.example.bookapp.models.Book;
 import com.example.bookapp.models.Category;
 
@@ -46,6 +48,8 @@ public class MyDataBase extends SQLiteOpenHelper {
         long result= db.insert(category_tabel,null,cv);
         if(result!=-1){
             Toast.makeText(context, "Category added successfully", Toast.LENGTH_SHORT).show();
+            Intent intent=new Intent(context, MainActivity.class);
+            context.startActivity(intent);
         }else{
             Toast.makeText(context, "Failed to add Category", Toast.LENGTH_SHORT).show();
         }
@@ -93,6 +97,8 @@ public class MyDataBase extends SQLiteOpenHelper {
        long result= db.insert(book_tabel,null,cv);
        if(result!=-1){
            Toast.makeText(context, "Book added successfully", Toast.LENGTH_SHORT).show();
+           Intent intent=new Intent(context, MainActivity.class);
+           context.startActivity(intent);
        }else{
            Toast.makeText(context, "Failed to add book", Toast.LENGTH_SHORT).show();
        }
@@ -100,12 +106,12 @@ public class MyDataBase extends SQLiteOpenHelper {
     public void updateBook(Book book) {
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv=new ContentValues();
+        cv.put("CATEGORYNAME",book.getCategoryName());
         cv.put("BOOKNAME",book.getBookName());
         cv.put("AUTHORNAME",book.getAuthoName());
         cv.put("RELEASEYEAR",book.getRelaesYesrs());
         cv.put("PAGENUMBER",book.getPageNumber());
         cv.put("BOOKIMAGE",book.getImage());
-        cv.put("CATEGORYNAME",book.getCategoryName());
         cv.put("FAVOURITE",book.isFavourite());
         String args[] ={book.getId()+""};
         long result= db.update(book_tabel,cv,"id=?",args);
@@ -135,6 +141,7 @@ public class MyDataBase extends SQLiteOpenHelper {
             Book b = new Book(bookName,relaesYesrs,authoName,pageNumber,cat,fav);
             b.setImage(imageContent);
             books.add(b);
+            b.setId(id);
             cursor.moveToNext();
         }
         return books;
@@ -161,13 +168,10 @@ public class MyDataBase extends SQLiteOpenHelper {
         }
         return books;
     }
-    public void deleteBook(String id) {
+    public long deleteBook(int id) {
         SQLiteDatabase db = getWritableDatabase();
-        String args[] ={id};
-        db.delete(book_tabel,"id=?",args);
+        String args[] ={id+""};
+        long result=db.delete(book_tabel,"id=?",args);
+       return result;
     }
-//    public void deleteAllBooks() {
-//        SQLiteDatabase db = getWritableDatabase();
-//        db.execSQL("DELETE FROM "+table_name+";");
-//    }
 }

@@ -43,7 +43,7 @@ public class AllBookAdapter extends RecyclerView.Adapter<AllBookAdapter.ViewHold
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(context, ShowBookDetails.class);
-                intent.putExtra("book",b);
+                ShowBookDetails.book = b;
                 context.startActivity(intent);
             }
         });

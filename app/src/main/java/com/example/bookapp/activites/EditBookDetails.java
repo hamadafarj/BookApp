@@ -28,7 +28,8 @@ public class EditBookDetails extends AppCompatActivity{
     ImageView editBookImage;
     byte[]imageContent;
     Bitmap showImage;
-
+    int id;
+    static Book book;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,23 +37,30 @@ public class EditBookDetails extends AppCompatActivity{
         TextView bookName,authorName,relaseYear,pageNumber;
         Button UpdateButton;
         Spinner dropdown;
-        Intent intent=getIntent();
-        Book book=(Book) intent.getSerializableExtra("book");
+
+        MyDataBase myDataBase=new MyDataBase(EditBookDetails.this);
+
         bookName=findViewById(R.id.BookNameEditTxt);
         authorName=findViewById(R.id.AuthorNameEditTxt);
         relaseYear=findViewById(R.id.RelaseYearEditTxt);
         pageNumber=findViewById(R.id.PageNamberEditTxt);
-        editBookImage=findViewById(R.id.Edit_profile_image);
         UpdateButton=findViewById(R.id.button3);
         dropdown = findViewById(R.id.spinner);
+
+
+        id=book.getId();
+        editBookImage=findViewById(R.id.Edit_profile_image);
+
         bookName.setText(book.getBookName());
         authorName.setText(book.getAuthoName());
         relaseYear.setText(book.getRelaesYesrs()+"");
         pageNumber.setText(book.getPageNumber()+"");
-        MyDataBase myDataBase=new MyDataBase(EditBookDetails.this);
+
+        imageContent = book.getImage() ;
         showImage= BitmapFactory.decodeByteArray(book.getImage(),0,book.getImage().length);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, myDataBase.getAllCategroyName());
         dropdown.setAdapter(adapter);
+
         editBookImage.setImageBitmap(showImage);
         editBookImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +71,7 @@ public class EditBookDetails extends AppCompatActivity{
             }
         });
 
+
         UpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,7 +81,8 @@ public class EditBookDetails extends AppCompatActivity{
                 int PageNumber=Integer.parseInt(pageNumber.getText().toString());
                 String selectedVal=dropdown.getSelectedItem().toString();;
                 Book editBookDetails=new Book(BookName,ReleaesYear,AuthorName,PageNumber,selectedVal);
-                book.setImage(imageContent);
+                editBookDetails.setImage(imageContent);
+                editBookDetails.setId(id);
                 myDataBase.updateBook(editBookDetails);
             }
         });

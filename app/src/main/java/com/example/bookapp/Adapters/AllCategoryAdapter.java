@@ -53,7 +53,7 @@ public class AllCategoryAdapter extends RecyclerView.Adapter<AllCategoryAdapter.
        TextView tv_name;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv_name=itemView.findViewById(R.id.CategoryName);
+            tv_name=itemView.findViewById(R.id.CategoryNameasd);
         }
     }
 }
